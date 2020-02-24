@@ -3,10 +3,9 @@ window.onload = (function(){const sub = document.querySelector('#sub');
   const div = document.querySelector('.eventArea');
   const ls = document.querySelector('.listshow');
   const data = JSON.parse(localStorage.getItem('listitem'))||[];
-  const finished = JSON.parse(localStorage.getItem('finished'))||[];
   sub.addEventListener('click',addData);
   ls.addEventListener('click',deleteData);
-  ls.addEventListener('click',finish);
+  ls.addEventListener('click',finished);
   function addData(e){
     e.preventDefault();
     if(input.value==''){
@@ -32,39 +31,28 @@ window.onload = (function(){const sub = document.querySelector('#sub');
     }else{
       e.preventDefault();
     }
-    const num = e.target.dataset.num;
-    data.splice(num,1);
+    const num = e.target.parentElement.dataset.num;
+    let txt = document.querySelectorAll('li span')[num].textContent;
+      let ix;
+      for(let i=0; i<data.length; i++){
+        if(data[i].content == txt){
+          ix = i;
+        }
+      }
+    data.splice(ix,1);
     localStorage.setItem('listitem',JSON.stringify(data));
     updatelist(data);
   }
-  function finish(e){
+  function finished(e){
     if(e.target.tagName !== 'INPUT') return;
     const li = document.querySelectorAll('.listshow li');
     const num = e.target.dataset.num;
     if(e.target.checked){
       li[num].style.color = '#fff';
       li[num].style.background = '#62f0e4';
-      let txt = document.querySelectorAll('li span')[num].textContent;
-      let ix = data.forEach((res,index)=>{
-        if(res.finish==txt) return index;
-      })
-      let obj = {'finish':txt};
-      data.splice(ix,1);
-      finished.push(obj);
-      localStorage.setItem('listitem',JSON.stringify(data));
-      localStorage.setItem('finished',JSON.stringify(finished));
     }else{
       li[num].style.color = 'lightcoral';
       li[num].style.background = 'none';
-      let txt = document.querySelectorAll('li span')[num].textContent;
-      let ix = finished.forEach((res,index)=>{
-        if(res.finish==txt) return index;
-      })
-      let obj = {'content':txt};
-      data.splice(num,0,obj);
-      finished.splice(ix,1);
-      localStorage.setItem('listitem',JSON.stringify(data));
-      localStorage.setItem('finished',JSON.stringify(finished));
     }
   }
 });
